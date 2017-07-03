@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YCCM Cafe: Cashier</title>
+  {% load static %}
+
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-switch.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/cashier_ui.css' %}" />
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <h1 class="title center">YCCM Cafe</h1>
+    </div> <!-- Title -->
+    <div class="row">
+      <div class="col-md-offset-1 col-md-6"> <!-- Main UI -->
+
+        <div class="row">
+          <div class="sub-content">
+            <h1>Drinks</h1>
+            {% if inventory_list %}
+              {% for item in inventory_list %}
+                <!-- Template of item -->
+                  {% if item.drink %}
+                    <div class="col-sm-6 col-md-6">
+                    <div class="thumbnail">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <img class="item" id="{{ item.guid }}" onclick="updateReceipt('{{ item.name }}', {{ item.price }}, '{{ item.guid }}')" src="../../static/{{ item.image }}" alt="{{ item.name }}" height="150px" width="150px">
+
+                        </div>
+                        <div class="col-md-6">
+                          <div class="dropdown">
+                            <button id="quantity" class="btn submit" type="button" data-toggle="dropdown">Quantity
+                              <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                              <li><a href="#">1</a></li>
+                              <li><a href="#">2</a></li>
+                              <li><a href="#">3</a></li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="caption">
+                        <h3>{{ item.name }}</h3>
+                        <div class="row">
+                          <div class="col-md-2  ">
+                            <h3>${{ item.price }}0</h3>
+                          </div>
+
+                          <div class="col-md-offset-1 col-md-3">
+                            <img class="item" src="../../static/images/espresso.jpg" height="50px" width="50px">
+                          </div>
+                          <div class="col-md-3">
+                            <img class="item mod" src="../../static/images/ice_cube.png" height="50px" width="50px">
+                          </div>
+                          <div class="col-md-3">
+                            <img class="item" src="../../static/images/upgrade_icon.png" height="50px" width="50px">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                  {% else %}
+                  {% endif %}
+              {% endfor %}
+            {% else %}
+              <p>No items are available.</p>
+            {% endif %}
+          </div>
+        </div> <!-- Drinks Content -->
+
+        <div class="row">
+          <div class="sub-content">
+            <h1>Bakery Items</h1>
+            {% if inventory_list %}
+              {% for item in inventory_list %}
+                <!-- Template of item -->
+                  {% if not item.drink %}
+                    <div class="col-sm-6 col-md-6">
+                    <div class="thumbnail">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <img class="item" id="{{ item.guid }}" onclick="updateReceipt('{{ item.name }}', {{ item.price }}, '{{ item.guid }}')" src="../../static/{{ item.image }}" alt="{{ item.name }}" height="150px" width="150px">
+
+                        </div>
+                        <div class="col-md-6">
+                          <div class="dropdown">
+                            <button id="quantity" class="btn submit" type="button" data-toggle="dropdown">Quantity
+                              <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                              <li><a href="#">1</a></li>
+                              <li><a href="#">2</a></li>
+                              <li><a href="#">3</a></li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="caption">
+                        <h3>{{ item.name }}</h3>
+                        <div class="row">
+                          <div class="col-md-2  ">
+                            <h3>${{ item.price }}0</h3>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                  {% else %}
+                  {% endif %}
+              {% endfor %}
+            {% else %}
+              <p>No items are available.</p>
+            {% endif %}
+          </div>
+        </div> <!-- Baked Goods Content -->
+      </div>
+
+
+      <div class="col-md-offset-1 col-md-3 payment-ui"> <!-- Payment UI -->
+        <div class="row">
+          <h1 class="center">Payment Page</h1>
+        </div>
+
+        <div class="row payment-element">
+          <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">Name of Customer</span>
+            <input type="text" class="form-control" placeholder="Customer Name" aria-describedby="basic-addon1">
+          </div>
+        </div> <!-- Input Page -->
+
+
+          <h3>Receipt: </h3>
+          <p id="receipt"></p>
+        <div class="row receipt payment-element" id="total">
+          <div class="col-md-3"><h2 >Total: </h2></div>
+          <div class="col-md-3 col-md-offset-6"><h2>$0.00</h2></div>
+        </div>
+
+        <div class="row payment-element">
+          <div class="col-md-offset-3 col-md-5">
+            <button class="btn submit" type="button">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/bootstrap-switch.min.js' %}"></script>
+
+<script>
+  function updateReceipt(itemName, itemPrice, itemGuid) {
+    alert(document.getElementById("latte").innerHTML);
+  }
+</script>
+
+</body>
+</html>
