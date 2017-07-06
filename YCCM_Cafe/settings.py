@@ -29,10 +29,10 @@ with open('secret_stuff.json', 'r') as json_file:
     # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
     DATABASES = data["DATABASES"]
 
+    ALLOWED_HOSTS = data["ALLOWED_HOSTS"]
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
 
 # Application definition
 
