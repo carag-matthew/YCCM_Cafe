@@ -18,7 +18,7 @@ class Product(models.Model):
     price = models.FloatField()
     image = models.CharField(max_length=100)
     isDrink = models.BooleanField(name='drink', default=True)
-    guid = models.CharField(max_length=50)
+    guid = models.CharField(name='guid', max_length=50)
 
 
 class Order(models.Model):
