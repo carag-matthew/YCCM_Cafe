@@ -48,16 +48,24 @@
                             <h3>${{ item.price }}0</h3>
                           </div>
 
-                          <div class="col-sm-3 col-md-3">
+                          <div class="col-sm-3 col-md-4">
                             <img class="item" src="../../static/images/espresso.jpg" onclick="addToEspressoQuantity( '{{ item.guid }}')" height="50px" width="50px">
-                              <input type="text" class="form-control" id="{{ item.guid }}EspQty" value="0">
-                              <img onclick="subtractFromEspressoQuantity('{{ item.guid }}')" src="../../static/images/minus-button.png" width="24px" height="24px" class="item">
-                              <img onclick="addToEspressoQuantity( '{{ item.guid }}')" src="../../static/images/plus-button.png" width="24px" height="24px" class="item">
+                            <div class="row">
+                              <div class="col-md-4">
+                                <input type="text" class="form-control" id="{{ item.guid }}EspQty" value="0" style="width: 40px">
+                              </div>
+                              <div class="col-md-2">
+                                <img onclick="subtractFromEspressoQuantity('{{ item.guid }}')" src="../../static/images/minus-button.png" width="24px" height="24px" class="item">
+                              </div>
+                              <div class="col-md-2">
+                                <img onclick="addToEspressoQuantity( '{{ item.guid }}')" src="../../static/images/plus-button.png" width="24px" height="24px" class="item">
+                              </div>
+                            </div>
                           </div>
-                          <div class="col-sm-3 col-md-3">
+                          <div class="col-sm-3 col-md-2">
                             <img class="item mod" src="../../static/images/ice_cube.png" id="{{ item.guid }}IceOpt" onclick="toggleIceOption('{{ item.guid }}')" height="50px" width="50px" data-toggle="false">
                           </div>
-                          <div class="col-sm-3 col-md-3">
+                          <div class="col-sm-3 col-md-2">
                             <img class="item" src="../../static/images/upgrade_icon.png" id="{{ item.guid }}UpgradeOpt" onclick="toggleUpgradeOption('{{ item.guid }}')" height="50px" width="50px" data-toggle="false">
                           </div>
                         </div>
@@ -182,8 +190,9 @@
           "hasIce": getIceToggle(itemGuid),
           "hasSizeUpgrade": getUpgradeToggle(itemGuid)
       };
+
       insertItemToJSON(item);
-      console.log(items);
+      updateReceiptText(items);
 
       resetFields(itemGuid);
   }
@@ -194,11 +203,11 @@
   function resetFields(itemGuid) {
       var itemGuidQty = itemGuid + "Qty";
       var itemGuidEspQty = itemGuid + "EspQty";
-      var itemGuidIceOpt = itemGuid + "IceOpt";
-      var itemGuidIceOpt = itemGuid + "UpgradeOpt";
 
       document.getElementById(itemGuidQty).value = 1;
-      document.getElementById(itemGuidEspQty).value = 0;
+      if(!document.getElementById(itemGuidEspQty) === null) {
+          document.getElementById(itemGuidEspQty).value = 0;
+      }
       resetIceToggle(itemGuid);
       resetUpgradeToggle(itemGuid);
   }
@@ -266,7 +275,9 @@
   }
   function getEspressoQuantity(itemGuid) {
       var itemGuidEspQty = itemGuid + "EspQty";
-
+      if(document.getElementById(itemGuidEspQty) === null) {
+          return null;
+      }
       return isNaN(parseInt(document.getElementById(itemGuidEspQty).value)) ? 0 : parseInt(document.getElementById(itemGuidEspQty).value);
   }
 
@@ -285,11 +296,16 @@
   }
   function getIceToggle(itemGuid) {
       var itemGuidIceOpt = itemGuid + "IceOpt";
+      if(document.getElementById(itemGuidIceOpt) === null) {
+          return null;
+      }
       return document.getElementById(itemGuidIceOpt).getAttribute('data-toggle') === 'true';
   }
   function resetIceToggle(itemGuid) {
       var itemGuidIceOpt = itemGuid + "IceOpt";
-      document.getElementById(itemGuidIceOpt).setAttribute('data-toggle', "false");
+      if(document.getElementById(itemGuidIceOpt) !== null) {
+          document.getElementById(itemGuidIceOpt).setAttribute('data-toggle', "false");
+      }
   }
 
   // Upgrade Size Option Functions
@@ -307,11 +323,16 @@
   }
   function getUpgradeToggle(itemGuid) {
       var itemGuidIceOpt = itemGuid + "UpgradeOpt";
+      if(document.getElementById(itemGuidIceOpt) === null) {
+          return null;
+      }
       return document.getElementById(itemGuidIceOpt).getAttribute('data-toggle') === 'true';
   }
   function resetUpgradeToggle(itemGuid) {
       var itemGuidIceOpt = itemGuid + "UpgradeOpt";
-      document.getElementById(itemGuidIceOpt).setAttribute('data-toggle', "false");
+      if(document.getElementById(itemGuidIceOpt) !== null) {
+          document.getElementById(itemGuidIceOpt).setAttribute('data-toggle', "false");
+      }
   }
 
   // On Document Ready
