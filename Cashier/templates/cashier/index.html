@@ -14,50 +14,51 @@
     <div class="row">
       <h1 class="title center">YCCM Cafe</h1>
     </div> <!-- Title -->
-    <div class="row">
-      <div class="col-md-offset-1 col-md-6"> <!-- Main UI -->
+    <div class="row ">
+      <div class="col-sm-12 col-md-offset-1 col-md-6 "> <!-- Main UI -->
 
-        <div class="row">
-          <div class="sub-content">
-            <h1>Drinks</h1>
+        <div class="row sub-content">
+          <div class="sub-content-header">
+            <h1 class="subtitle">Drinks</h1>
             {% if inventory_list %}
               {% for item in inventory_list %}
                 <!-- Template of item -->
                   {% if item.drink %}
-                    <div class="col-sm-6 col-md-6">
+                    <div class="col-sm-12 col-md-6">
                     <div class="thumbnail">
                       <div class="row">
-                        <div class="col-md-6">
-                          <img class="item" id="{{ item.guid }}" onclick="updateReceipt('{{ item.name }}', {{ item.price }}, '{{ item.guid }}')" src="../../static/{{ item.image }}" alt="{{ item.name }}" height="150px" width="150px">
+                        <div class="col-sm-5 col-md-5">
+                          <img class="item" onclick="createItem('{{ item.name }}', '{{ item.guid }}')" src="../../static/{{ item.image }}" alt="{{ item.name }}" height="150px" width="150px">
 
                         </div>
-                        <div class="col-md-6">
-                          <div class="dropdown">
-                            <button id="quantity" class="btn submit" type="button" data-toggle="dropdown">Quantity
-                              <span class="caret"></span></button>
-                            <ul class="dropdown-menu">
-                              <li><a href="#">1</a></li>
-                              <li><a href="#">2</a></li>
-                              <li><a href="#">3</a></li>
-                            </ul>
+                        <div class="col-sm-7 col-md-7">
+                          <div>
+                            <h2 class="quantity center">Quantity
+                              <input type="text" class="form-control" id="{{ item.guid }}Qty" value="1">
+                              <img onclick="subtractFromQuantity('{{ item.guid }}')" src="../../static/images/minus-button.png" width="24px" height="24px" class="item">
+                              <img onclick="addToQuantity( '{{ item.guid }}')" src="../../static/images/plus-button.png" width="24px" height="24px" class="item">
+                            </h2>
                           </div>
                         </div>
                       </div>
                       <div class="caption">
-                        <h3>{{ item.name }}</h3>
+                        <h3><b>{{ item.name }}</b></h3>
                         <div class="row">
-                          <div class="col-md-2  ">
+                          <div class="col-sm-2 col-md-2">
                             <h3>${{ item.price }}0</h3>
                           </div>
 
-                          <div class="col-md-offset-1 col-md-3">
-                            <img class="item" src="../../static/images/espresso.jpg" height="50px" width="50px">
+                          <div class="col-sm-3 col-md-3">
+                            <img class="item" src="../../static/images/espresso.jpg" onclick="addToEspressoQuantity( '{{ item.guid }}')" height="50px" width="50px">
+                              <input type="text" class="form-control" id="{{ item.guid }}EspQty" value="0">
+                              <img onclick="subtractFromEspressoQuantity('{{ item.guid }}')" src="../../static/images/minus-button.png" width="24px" height="24px" class="item">
+                              <img onclick="addToEspressoQuantity( '{{ item.guid }}')" src="../../static/images/plus-button.png" width="24px" height="24px" class="item">
                           </div>
-                          <div class="col-md-3">
-                            <img class="item mod" src="../../static/images/ice_cube.png" height="50px" width="50px">
+                          <div class="col-sm-3 col-md-3">
+                            <img class="item mod" src="../../static/images/ice_cube.png" id="{{ item.guid }}IceOpt" onclick="toggleIceOption('{{ item.guid }}')" height="50px" width="50px" data-toggle="false">
                           </div>
-                          <div class="col-md-3">
-                            <img class="item" src="../../static/images/upgrade_icon.png" height="50px" width="50px">
+                          <div class="col-sm-3 col-md-3">
+                            <img class="item" src="../../static/images/upgrade_icon.png" id="{{ item.guid }}UpgradeOpt" onclick="toggleUpgradeOption('{{ item.guid }}')" height="50px" width="50px" data-toggle="false">
                           </div>
                         </div>
                       </div>
@@ -72,9 +73,11 @@
           </div>
         </div> <!-- Drinks Content -->
 
-        <div class="row">
-          <div class="sub-content">
-            <h1>Bakery Items</h1>
+        <div class="row"></div>
+
+        <div class="row sub-content" style="margin-top: 20px;">
+          <div class="sub-content-header">
+            <h1 class="subtitle">Bakery Items</h1>
             {% if inventory_list %}
               {% for item in inventory_list %}
                 <!-- Template of item -->
@@ -82,24 +85,22 @@
                     <div class="col-sm-6 col-md-6">
                     <div class="thumbnail">
                       <div class="row">
-                        <div class="col-md-6">
-                          <img class="item" id="{{ item.guid }}" onclick="updateReceipt('{{ item.name }}', {{ item.price }}, '{{ item.guid }}')" src="../../static/{{ item.image }}" alt="{{ item.name }}" height="150px" width="150px">
 
+                        <div class="col-md-5">
+                          <img class="item" onclick="createItem('{{ item.name }}', '{{ item.guid }}')" src="../../static/{{ item.image }}" alt="{{ item.name }}" height="150px" width="150px">
                         </div>
-                        <div class="col-md-6">
-                          <div class="dropdown">
-                            <button id="quantity" class="btn submit" type="button" data-toggle="dropdown">Quantity
-                              <span class="caret"></span></button>
-                            <ul class="dropdown-menu">
-                              <li><a href="#">1</a></li>
-                              <li><a href="#">2</a></li>
-                              <li><a href="#">3</a></li>
-                            </ul>
-                          </div>
+
+                        <div class="col-sm-7 col-md-7">
+                          <h2 class="quantity center">Quantity
+                            <input type="text" class="form-control" id="{{ item.guid }}Qty" value="1">
+                            <img onclick="subtractFromQuantity('{{ item.guid }}')" src="../../static/images/minus-button.png" width="24px" height="24px" class="item">
+                            <img onclick="addToQuantity( '{{ item.guid }}')" src="../../static/images/plus-button.png" width="24px" height="24px" class="item">
+                          </h2>
                         </div>
                       </div>
+
                       <div class="caption">
-                        <h3>{{ item.name }}</h3>
+                        <h3><b>{{ item.name }}</b></h3>
                         <div class="row">
                           <div class="col-md-2  ">
                             <h3>${{ item.price }}0</h3>
@@ -119,14 +120,14 @@
       </div>
 
 
-      <div class="col-md-offset-1 col-md-3 payment-ui"> <!-- Payment UI -->
+      <div class="col-sm-12 col-md-offset-1 col-md-3 payment-ui"> <!-- Payment UI -->
         <div class="row">
           <h1 class="center">Payment Page</h1>
         </div>
 
         <div class="row payment-element">
           <div class="input-group">
-            <span class="input-group-addon" id="basic-addon1">Name of Customer</span>
+            <span class="input-group-addon" id="customer-name">Name of Customer</span>
             <input type="text" class="form-control" placeholder="Customer Name" aria-describedby="basic-addon1">
           </div>
         </div> <!-- Input Page -->
@@ -140,8 +141,11 @@
         </div>
 
         <div class="row payment-element">
-          <div class="col-md-offset-3 col-md-5">
-            <button class="btn submit" type="button">Submit</button>
+          <div class="col-md-6">
+            <button class="btn btn-danger" type="button"><h3>Cancel</h3></button>
+          </div>
+          <div class="col-md-6">
+            <button class="btn btn-success" type="button"><h3>Submit</h3></button>
           </div>
         </div>
       </div>
@@ -154,9 +158,165 @@
 <script src="{% static 'js/bootstrap-switch.min.js' %}"></script>
 
 <script>
-  function updateReceipt(itemName, itemPrice, itemGuid) {
-    alert(document.getElementById("latte").innerHTML);
+  // Variables
+  var totalItemCount = 0;
+  var items = {
+      "items": []
+  };
+
+  // Receipt Functions
+  function createItem(name, itemGuid) {
+      var quantity = getQuantity(itemGuid);
+      var espressoQuantity = getEspressoQuantity(itemGuid);
+
+      // Validate
+      if(quantity < 0 || espressoQuantity < 0) {
+          alert("Quantities must be a positive integer.");
+          return;
+      }
+
+      var item = {
+          "name": name,
+          "quantity": quantity,
+          "numShots": espressoQuantity,
+          "hasIce": getIceToggle(itemGuid),
+          "hasSizeUpgrade": getUpgradeToggle(itemGuid)
+      };
+      insertItemToJSON(item);
+      console.log(items);
+
+      resetFields(itemGuid);
   }
+  function insertItemToJSON(item) {
+    items["items"][totalItemCount] = item;
+    totalItemCount++;
+  }
+  function resetFields(itemGuid) {
+      var itemGuidQty = itemGuid + "Qty";
+      var itemGuidEspQty = itemGuid + "EspQty";
+      var itemGuidIceOpt = itemGuid + "IceOpt";
+      var itemGuidIceOpt = itemGuid + "UpgradeOpt";
+
+      document.getElementById(itemGuidQty).value = 1;
+      document.getElementById(itemGuidEspQty).value = 0;
+      resetIceToggle(itemGuid);
+      resetUpgradeToggle(itemGuid);
+  }
+
+  function getCustomerName() {
+      return document.getElementById('customer-name').value == null ? '' : document.getElementById('customer-name').value;
+  }
+  function generatePOSTJson() {
+      var postJSON = {
+        "customerName": getCustomerName(),
+        "items": items
+      };
+      return postJSON;
+  }
+
+  // Quantity Functions
+  function addToQuantity(itemGuid) {
+      var itemGuidQty = itemGuid + "Qty";
+      var quantity = 0;
+      if(isNaN(parseInt(document.getElementById(itemGuidQty).value))) {
+          alert("Quantity must be a positive integer");
+      } else {
+          quantity = parseInt(document.getElementById(itemGuidQty).value) + 1;
+          document.getElementById(itemGuidQty).value = quantity;
+      }
+
+      return quantity;
+  }
+  function subtractFromQuantity(itemGuid) {
+      var itemGuidQty = itemGuid + "Qty";
+      var quantity = 0;
+      if(isNaN(parseInt(document.getElementById(itemGuidQty).value)) || parseInt(document.getElementById(itemGuidQty).value) < 0) {
+          alert("Quantity must be a positive integer");
+      } else {
+          if(quantity > 1) {
+              quantity -= 1;
+              document.getElementById(itemGuidQty).value = quantity;
+          }
+      }
+      return quantity;
+  }
+  function getQuantity(itemGuid) {
+      var itemGuidQty = itemGuid + "Qty"
+
+      return isNaN(parseInt(document.getElementById(itemGuidQty).value)) ? 0 : parseInt(document.getElementById(itemGuidQty).value);
+  }
+
+  // Espresso Quantity Functions
+  function addToEspressoQuantity(itemGuid) {
+      var itemGuidEspQty = itemGuid + "EspQty";
+      var espQuantity = parseInt(document.getElementById(itemGuidEspQty).value) + 1 || 0;
+      document.getElementById(itemGuidEspQty).value = espQuantity;
+
+      return espQuantity;
+  }
+  function subtractFromEspressoQuantity(itemGuid) {
+      var itemGuidEspQty = itemGuid + "EspQty";
+      var espQuantity = parseInt(document.getElementById(itemGuidEspQty).value) || 0;
+      if(espQuantity > 0) {
+          espQuantity -= 1;
+          document.getElementById(itemGuidEspQty).value = espQuantity;
+      }
+
+      return espQuantity;
+  }
+  function getEspressoQuantity(itemGuid) {
+      var itemGuidEspQty = itemGuid + "EspQty";
+
+      return isNaN(parseInt(document.getElementById(itemGuidEspQty).value)) ? 0 : parseInt(document.getElementById(itemGuidEspQty).value);
+  }
+
+  // Ice Option Functions
+  function toggleIceOption(itemGuid) {
+      var itemGuidIceOpt = itemGuid + "IceOpt";
+      if(document.getElementById(itemGuidIceOpt).getAttribute('data-toggle') === "false") {
+          // Set the toggle to true and highlight the image
+          document.getElementById(itemGuidIceOpt).setAttribute('data-toggle', "true");
+          alert("ICE TOGGLE TRUE");
+      } else {
+          // Set the toggle to false and deselect the image
+          document.getElementById(itemGuidIceOpt).setAttribute('data-toggle', "false");
+          alert("ICE TOGGLE FALSE");
+      }
+  }
+  function getIceToggle(itemGuid) {
+      var itemGuidIceOpt = itemGuid + "IceOpt";
+      return document.getElementById(itemGuidIceOpt).getAttribute('data-toggle') === 'true';
+  }
+  function resetIceToggle(itemGuid) {
+      var itemGuidIceOpt = itemGuid + "IceOpt";
+      document.getElementById(itemGuidIceOpt).setAttribute('data-toggle', "false");
+  }
+
+  // Upgrade Size Option Functions
+  function toggleUpgradeOption(itemGuid) {
+      var itemGuidIceOpt = itemGuid + "UpgradeOpt";
+      if(document.getElementById(itemGuidIceOpt).getAttribute('data-toggle') === "false") {
+          // Set the toggle to true and highlight the image
+          document.getElementById(itemGuidIceOpt).setAttribute('data-toggle', "true");
+          alert("UPGRADE TOGGLE TRUE");
+      } else {
+          // Set the toggle to false and deselect the image
+          document.getElementById(itemGuidIceOpt).setAttribute('data-toggle', "false");
+          alert("UPGRADE TOGGLE FALSE");
+      }
+  }
+  function getUpgradeToggle(itemGuid) {
+      var itemGuidIceOpt = itemGuid + "UpgradeOpt";
+      return document.getElementById(itemGuidIceOpt).getAttribute('data-toggle') === 'true';
+  }
+  function resetUpgradeToggle(itemGuid) {
+      var itemGuidIceOpt = itemGuid + "UpgradeOpt";
+      document.getElementById(itemGuidIceOpt).setAttribute('data-toggle', "false");
+  }
+
+  // On Document Ready
+  $( document ).ready(function() {
+  });
 </script>
 
 </body>

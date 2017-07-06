@@ -3,7 +3,7 @@
 }
 
 body  {
-    background-color: #644d3c;
+    background-color: #453420;
     color: #ffffff;
 }
 
@@ -25,7 +25,11 @@ div.payment-ui {
 div.sub-content {
     background-color: #dec8af;
     border-radius: 10px;
+}
 
+div.sub-content-header {
+    background-color: #c7a379;
+    padding-top: 0px;
 }
 
 div.payment-element {
@@ -36,7 +40,14 @@ div.thumbnail {
     background-color: #a7b39b;
 }
 
-button.submit {
+h2.quantity {
+    background-color: #c6c97b;
+    border-radius: 10px;
+    padding: 5px;
+    margin: auto;
+}
+
+button {
   display: inline-block;
   border-radius: 4px;
   background-color: #c6c97b;
@@ -51,25 +62,25 @@ button.submit {
   margin: 5px;
 }
 
-button.submit span {
+button span {
   cursor: pointer;
   display: inline-block;
   position: relative;
   transition: 0.5s;
 }
 
-button.submit span:after {
+button span:after {
   position: absolute;
   opacity: 0;
   top: 0;
   transition: 0.5s;
 }
 
-button.submit:hover span {
+button:hover span {
   padding-right: 0px;
 }
 
-button.submit:hover span:after {
+button:hover span:after {
   opacity: 1;
   right: 0;
 }
@@ -95,6 +106,10 @@ img.mod {
 h1.title {
     font-family: "Helvetica", Times, serif;
     font-size: 40px;
+}
+
+h1.subtitle {
+    padding-left: 10px;
 }
 
 #total {
