@@ -10,6 +10,7 @@ class ProductMod(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=200)
     price = models.FloatField()
+    guid = models.CharField(name='guid', max_length=50)
 
 
 class Product(models.Model):
