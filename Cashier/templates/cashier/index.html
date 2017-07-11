@@ -28,7 +28,7 @@
                     <div class="thumbnail">
                       <div class="row">
                         <div class="col-sm-5 col-md-5">
-                          <img class="item" onclick="createItem('{{ item.name }}', '{{ item.guid }}')" src="../../static/{{ item.image }}" alt="{{ item.name }}" height="150px" width="150px">
+                          <img class="item" onclick="createItem('{{ item.name }}', '{{ item.guid }}', {{ item.price }})" src="../../static/{{ item.image }}" alt="{{ item.name }}" height="150px" width="150px">
 
                         </div>
                         <div class="col-sm-7 col-md-7">
@@ -101,7 +101,7 @@
                       <div class="row">
 
                         <div class="col-md-5">
-                          <img class="item" onclick="createItem('{{ item.name }}', '{{ item.guid }}')" src="../../static/{{ item.image }}" alt="{{ item.name }}" height="150px" width="150px">
+                          <img class="item" onclick="createItem('{{ item.name }}', '{{ item.guid }}', {{ item.price }})" src="../../static/{{ item.image }}" alt="{{ item.name }}" height="150px" width="150px">
                         </div>
 
                         <div class="col-sm-7 col-md-7">
@@ -175,17 +175,22 @@
   // Variables
   var totalItemCount = 0;
   var receipt = {
-      "items": [],
+      "items": []
   };
 
   // Receipt Functions
-  function createItem(name, itemGuid) {
-      var quantity = getQuantity(itemGuid+"Qty");
-      var espressoQuantity = getQuantity(itemGuid+"EspQty");
-      var chocolateQuantity = getQuantity(itemGuid+"ChocSyrup");
-      var vanillaQuantity = getQuantity(itemGuid+"VaniSyrup");
-      var hazelnutQuantity = getQuantity(itemGuid+"HazeSyrup");
-      var caramelQuantity = getQuantity(itemGuid+"CaraSyrup");
+  function createItem(name, itemGuid, price) {
+      try {
+          var quantity = getQuantity(itemGuid+"Qty");
+          var espressoQuantity = getQuantity(itemGuid+"EspQty");
+          var chocolateQuantity = getQuantity(itemGuid+"ChocSyrup");
+          var vanillaQuantity = getQuantity(itemGuid+"VaniSyrup");
+          var hazelnutQuantity = getQuantity(itemGuid+"HazeSyrup");
+          var caramelQuantity = getQuantity(itemGuid+"CaraSyrup");
+      } catch(e) {
+          alert(e.message);
+          return;
+      }
 
       // Validate
       if(quantity < 0 || espressoQuantity < 0 || chocolateQuantity < 0 ||
@@ -197,19 +202,26 @@
       var item = {
           "name": name,
           "quantity": quantity,
-          "numEspressoShots": espressoQuantity,
-          "numChocolateShots": chocolateQuantity,
-          "numVanillaShots": vanillaQuantity,
-          "numHazelnutShots": hazelnutQuantity,
-          "numCaramelShots": caramelQuantity,
-          "hasIce": getToggle(itemGuid+"IceOpt"),
-          "hasSizeUpgrade": getToggle(itemGuid+"UpgradeOpt")
+          "price": price
       };
+
+      {% for mod in mods_list %}
+          if('{{ mod.guid }}' === 'IceOpt') { // TODO: Add isToggle field in db?
+              var toggleToQuantityConversion = getToggle(itemGuid + '{{ mod.guid }}') === false ? 0 : 1;
+              item['{{ mod.name }}'] = {
+                  "quantity": toggleToQuantityConversion,
+                  "price": {{ mod.price }}
+              };
+          } else {
+              item['{{ mod.name }}'] = {
+                  "quantity": getQuantity(itemGuid + '{{ mod.guid }}'),
+                  "price": {{ mod.price }}
+              };
+          }
+      {% endfor %}
 
       insertItemToJSON(item);
       updateReceiptText(receipt);
-
-      console.log(receipt);
 
       resetFields(itemGuid);
   }
@@ -228,8 +240,8 @@
       document.getElementById(itemGuidQty).value = 1;
 
       // Iterate through all the mods. If not a quantity field, assume it's a toggle and call resetToggle
-      for(var i = 0; modGuids.length; i++) {
-          if(document.getElementById(itemGuid + modGuids[i]).value !== null) {
+      for(var i = 0; i < modGuids.length; i++) {
+          if(modGuids[i] !== 'IceOpt') {
               document.getElementById(itemGuid + modGuids[i]).value = 0;
           } else {
               resetToggle(itemGuid + modGuids[i]);
@@ -277,25 +289,51 @@
       }
   }
   function updateReceiptText(items) {
-      var element = document.getElementById("receipt");
-      element.innerHTML = ""; // Clear the receipt
+      var receiptElement = document.getElementById("receipt");
+      var totalPriceElement = document.getElementById("totalPrice");
+
+      receiptElement.innerHTML = ""; // Clear the receipt
       var innerHTML = "";
       var items = receipt.items;
       // Iterate through the items array
-      for (var i = 0; i < items.length; i++) {
+      for(var i = 0; i < items.length; i++) {
           innerHTML += items[i].quantity + "x <b>" + items[i].name + "</b><br>";
-          if(items[i].numEspressoShots > 0) innerHTML += "<span style=\"padding-left:5em\"><i>Espresso Shots: " + items[i].numEspressoShots + "</i></span><br>";
-          if(items[i].numCaramelShots > 0) innerHTML += "<span style=\"padding-left:5em\"><i>Caramel Shots: " + items[i].numCaramelShots + "</i></span><br>";
-          if(items[i].numChocolateShots > 0) innerHTML += "<span style=\"padding-left:5em\"><i>Chocolate Shots: " + items[i].numChocolateShots + "</i></span><br>";
-          if(items[i].numHazelnutShots > 0) innerHTML += "<span style=\"padding-left:5em\"><i>Hazelnut Shots: " + items[i].numHazelnutShots + "</i></span><br>";
-          if(items[i].hasIce) innerHTML += "<span style=\"padding-left:5em\"><i>With Ice</i></span><br>";
-          if(items[i].hasSizeUpgrade) innerHTML += "<span style=\"padding-left:5em\"><i>Upgrade to 12 oz q</i></span><br>";
+          for(var attribute in items[i]) {
+              if(items[i].hasOwnProperty(attribute)) {
+                  if(items[i][attribute].hasOwnProperty('price')) {
+                      if(items[i][attribute] !== items[i]['name']) {
+                          if(items[i][attribute]['quantity'] > 0) {
+                              innerHTML += "<span style=\"padding-left:5em\"><i>" + attribute + ": " +
+                                  items[i][attribute]['quantity'] + "</i></span><br>";
+                          }
+                      }
+                  }
+              }
+          }
       }
-      console.log("items = " + innerHTML);
-      element.innerHTML += innerHTML;
+
+      receiptElement.innerHTML += innerHTML;
+
+      var total = parseFloat(calculateTotalCost(receipt["items"]));
+      total = total.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+      totalPriceElement.innerHTML = total;
   }
   function calculateTotalCost(items) {
-
+      var total = 0.0;
+      for(var i = 0; i < items.length; i++) {
+          total += (items[i]['price'] * items[i]['quantity']);
+          for(var attribute in items[i]) {
+              if(items[i].hasOwnProperty(attribute)) {
+                  if(items[i][attribute].hasOwnProperty('price')) {
+                      if(items[i][attribute] !== items[i]['name']) {
+                          total += (items[i][attribute]['price'] * items[i][attribute]['quantity']);
+                      }
+                  }
+              }
+          }
+      }
+      console.log(total);
+      return total;
   }
 
   // Quantity Functions
@@ -326,7 +364,14 @@
   function getQuantity(itemGuid) {
       var element = document.getElementById(itemGuid);
       if(element !== null) {
-          return isNaN(parseInt(document.getElementById(itemGuid).value)) ? 0 : parseInt(document.getElementById(itemGuid).value);
+          if((new RegExp('[1234567890]*')).test(element.value)) {
+              return isNaN(parseInt(element.value)) ? 0 : parseInt(element.value);
+          } else {
+              throw {
+                  error: "Invalid Integer Exception",
+                  message: "Quantity must be a positive integer"
+              };
+          }
       }
       return 0;
   }
@@ -354,7 +399,7 @@
       var element = document.getElementById(itemGuid);
       if(element !== null) {
           element.setAttribute('data-toggle', "false");
-          element.innerHTML = "<b>True</b>";
+          element.innerHTML = "<b>False</b>";
       }
   }
 
