@@ -87,12 +87,13 @@ button:hover span:after {
 
 img {
     border: 0;
-    border-radius: 50%;
+    /*border-radius: 50%;*/
     transition: all 0.5s;
 }
 
-img.item {
-
+img .payment-option {
+    border-radius: 0px !important;
+    transition: all 0.5s;
 }
 
 img:hover {

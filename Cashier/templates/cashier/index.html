@@ -159,7 +159,96 @@
             <button class="btn btn-danger" type="button"><h3>Cancel</h3></button>
           </div>
           <div class="col-md-6">
-            <button class="btn btn-success" type="button" onclick="submit()"><h3>Submit</h3></button>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-success" onclick="submit()">
+              <h3>Pay Now</h3>
+            </button>
+
+            <!-- Payment Modal -->
+            <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" id="myModalLabel">Check Out</h3>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <img src="../../static/images/cash.PNG" class="payment-option" onclick="renderCashModal()" width="256px" height="256px">
+                      </div>
+                      <div class="col-md-6">
+                        <img src="../../static/images/credit.PNG" class="payment-option" onclick="renderCreditModal()" width="256px" height="256px">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><h3>Cancel</h3></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cash Modal -->
+            <div class="modal fade" id="cashModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" id="myModalLabel">Cash Option</h3>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <div class="col-md-3"><h2 >Total: </h2></div>
+                      <div class="col-md-3 col-md-offset-6"><h2>$<span id="totalPrice-CashCheckout">0.00</span></h2></div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3"><h3>Enter amount tendered:</h3></div>
+                      <div class="col-md-3 col-md-offset-6">
+                        <div class="input-group">
+                          <span class="input-group-addon">$</span>
+                          <input type="text" class="form-control" aria-label="Amount">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="renderPaymentModal()"><h3>Cancel</h3></button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="renderCashEndModal()"><h3>Submit</h3></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Credit Modal -->
+            <div class="modal fade" id="creditModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" id="myModalLabel">Card Option</h3>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <div class="col-md-3"><h2 >Total: </h2></div>
+                      <div class="col-md-3 col-md-offset-6"><h2>$<span id="totalPrice-CashCheckout">0.00</span></h2></div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3"><h3>Enter amount tendered:</h3></div>
+                      <div class="col-md-3 col-md-offset-6">
+                        <div class="input-group">
+                          <span class="input-group-addon">$</span>
+                          <input type="text" class="form-control" aria-label="Amount">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="renderPaymentModal()"><h3>Cancel</h3></button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="renderCashEndModal()"><h3>Submit</h3></button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div> <!-- Payment UI -->
@@ -175,7 +264,8 @@
   // Variables
   var totalItemCount = 0;
   var receipt = {
-      "items": []
+      "items": [],
+      "totalPrice": 0
   };
 
   // Receipt Functions
@@ -263,6 +353,7 @@
   function submit() {
       try {
           generatePOSTJson();
+          $('#paymentModal').modal('toggle');
       } catch(e) {
           alert(e.message);
       }
@@ -333,6 +424,7 @@
           }
       }
       console.log(total);
+      receipt["totalPrice"] = total;
       return total;
   }
 
@@ -401,6 +493,19 @@
           element.setAttribute('data-toggle', "false");
           element.innerHTML = "<b>False</b>";
       }
+  }
+
+  // Render functions
+  function renderCashModal() {
+    var total = parseFloat(receipt["totalPrice"]);
+    total = total.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+    $('#paymentModal').modal('toggle');
+    $('#cashModal').modal('toggle');
+    document.getElementById("totalPrice-CashCheckout").innerHTML = total;
+  }
+
+  function renderPaymentModal() {
+    $('#paymentModal').modal('toggle');
   }
 
   // On Document Ready
