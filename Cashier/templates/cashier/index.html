@@ -10,12 +10,12 @@
   <link rel="stylesheet" type="text/css" href="{% static 'css/cashier_ui.css' %}" />
 </head>
 <body>
-  <div class="container-fluid">
+  <div class="container">
     <div class="row">
       <h1 class="title center">YCCM Cafe</h1>
     </div> <!-- Title -->
-    <div class="row ">
-      <div class="col-sm-12 col-md-offset-1 col-md-6 "> <!-- Main UI -->
+    <div class="row">
+      <div class="col-sm-offset-1 col-sm-6 col-md-7 "> <!-- Main UI -->
 
         <div class="row sub-content">
           <div class="sub-content-header">
@@ -24,59 +24,58 @@
               {% for item in inventory_list %}
                 <!-- Template of item -->
                   {% if item.drink %}
-                    <div class="col-sm-12 col-md-6">
-                    <div class="thumbnail">
-                      <div class="row">
-                        <div class="col-sm-5 col-md-5">
-                          <img class="item" onclick="createItem('{{ item.name }}', '{{ item.guid }}', {{ item.price }})" src="../../static/{{ item.image }}" alt="{{ item.name }}" height="150px" width="150px">
-
+                    <div class="col-sm-3 col-md-3">
+                      <div class="thumbnail">
+                        <div class="row">
+                          <div class="col-sm-12 col-md-12">
+                            <img class="item" onclick="createItem('{{ item.name }}', '{{ item.guid }}', {{ item.price }})" src="../../static/{{ item.image }}" alt="{{ item.name }}" height="100px" width="100%">
+                          </div>
                         </div>
-                        <div class="col-sm-7 col-md-7">
+                        <div class="row">
+                         <div class="col-sm-12 col-md-12">
                           <div>
-                            <h2 class="quantity center">Quantity
+                            <h4 class="quantity center">Quantity
                               <input type="text" class="form-control" id="{{ item.guid }}Qty" value="1">
                               <img onclick="subtractFromQuantity('{{ item.guid }}Qty')" src="../../static/images/minus-button.png" width="24px" height="24px" class="item">
                               <img onclick="addToQuantity( '{{ item.guid }}Qty')" src="../../static/images/plus-button.png" width="24px" height="24px" class="item">
-                            </h2>
+                            </h4>
+                          </div>
+                        </div>
+                        </div>
+                        <div class="caption">
+                          <div class="row">
+                            <div class="col-sm-2 col-md-2">
+                              <h4><b>{{ item.name }}</b></h4>
+                              <h4>${{ item.price }}0</h4>
+                            </div>
+
+                              <div class="dropdown col-sm-10 col-md-offset-1 col-md-9">
+                                <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">Add On
+                                <span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+                                  {% for mod in mods_list %}
+                                    {% if mod.name == "Add Ice" %}
+                                      <li>
+                                        <a onclick="toggleOption('{{ item.guid }}{{ mod.guid }}')"><i>{{ mod.name }}</i> |
+                                          <span id="{{ item.guid }}IceOpt" data-toggle="false"><b>False</b></span>
+                                        </a>
+                                      </li>
+                                    {% else %}
+                                      <li>
+                                        <a><i>{{ mod.name }}</i>
+                                          <img onclick="addToQuantity( '{{ item.guid }}{{ mod.guid }}')" src="../../static/images/plus-button.png" width="24px" height="24px" class="item">
+                                          <input type="text" class="form-control" id="{{ item.guid }}{{ mod.guid }}" value="0" style="width: 40px">
+                                          <img onclick="subtractFromQuantity('{{ item.guid }}{{ mod.guid }}')" src="../../static/images/minus-button.png" width="24px" height="24px" class="item">
+                                        </a>
+                                      </li>
+                                    {% endif %}
+
+                                  {% endfor %}
+                                </ul>
+                              </div> <!-- Dropdown -->
                           </div>
                         </div>
                       </div>
-                      <div class="caption">
-                        <h3><b>{{ item.name }}</b></h3>
-                        <div class="row">
-                          <div class="col-sm-2 col-md-2">
-                            <h3>${{ item.price }}0</h3>
-                          </div>
-
-                        <div class="col-sm-10 col-md-offset-1 col-md-9">
-                          <div class="container-fluid dropdown">
-                            <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">Add On
-                            <span class="caret"></span></button>
-                            <ul class="dropdown-menu">
-                              {% for mod in mods_list %}
-                                {% if mod.name == "Add Ice" %}
-                                  <li>
-                                    <a onclick="toggleOption('{{ item.guid }}{{ mod.guid }}')"><i>{{ mod.name }}</i> |
-                                      <span id="{{ item.guid }}IceOpt" data-toggle="false"><b>False</b></span>
-                                    </a>
-                                  </li>
-                                {% else %}
-                                  <li>
-                                    <a><i>{{ mod.name }}</i>
-                                      <img onclick="addToQuantity( '{{ item.guid }}{{ mod.guid }}')" src="../../static/images/plus-button.png" width="24px" height="24px" class="item">
-                                      <input type="text" class="form-control" id="{{ item.guid }}{{ mod.guid }}" value="0" style="width: 40px">
-                                      <img onclick="subtractFromQuantity('{{ item.guid }}{{ mod.guid }}')" src="../../static/images/minus-button.png" width="24px" height="24px" class="item">
-                                    </a>
-                                  </li>
-                                {% endif %}
-
-                              {% endfor %}
-                            </ul>
-                          </div>
-                        </div>
-                        </div>
-                      </div>
-                    </div>
                     </div>
                   {% else %}
                   {% endif %}
@@ -96,12 +95,12 @@
               {% for item in inventory_list %}
                 <!-- Template of item -->
                   {% if not item.drink %}
-                    <div class="col-sm-6 col-md-6">
+                    <div class="col-sm-3 col-md-3">
                     <div class="thumbnail">
                       <div class="row">
 
                         <div class="col-md-5">
-                          <img class="item" onclick="createItem('{{ item.name }}', '{{ item.guid }}', {{ item.price }})" src="../../static/{{ item.image }}" alt="{{ item.name }}" height="150px" width="150px">
+                          <img class="item" onclick="createItem('{{ item.name }}', '{{ item.guid }}', {{ item.price }})" src="../../static/{{ item.image }}" alt="{{ item.name }}" height="100px" width="100px">
                         </div>
 
                         <div class="col-sm-7 col-md-7">
@@ -134,7 +133,7 @@
       </div> <!-- Main UI -->
 
 
-    <div class="col-sm-12 col-md-offset-1 col-md-3 payment-ui">
+      <div class="col-sm-offset-1 col-sm-3 col-md-3 payment-ui">
         <div class="row">
           <h1 class="center">Payment Page</h1>
         </div>
@@ -187,8 +186,7 @@
                   </div>
                 </div>
               </div>
-            </div>
-
+            </div> <!-- Payment Modal -->
             <!-- Cash Modal -->
             <div class="modal fade" id="cashModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
               <div class="modal-dialog" role="document">
@@ -218,7 +216,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> <!-- Cash Modal -->
             <!-- Credit Modal -->
             <div class="modal fade" id="creditModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
               <div class="modal-dialog" role="document">
@@ -245,10 +243,10 @@
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal" onclick="renderPaymentModal()"><h3>Cancel</h3></button>
                     <button type="button" class="btn btn-success" data-dismiss="modal" onclick="renderCashEndModal()"><h3>Submit</h3></button>
-                  </div>
+                  </div> <!-- Modal Footer -->
                 </div>
               </div>
-            </div>
+            </div> <!-- Credit Modal -->
           </div>
         </div>
       </div> <!-- Payment UI -->
