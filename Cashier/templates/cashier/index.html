@@ -28,7 +28,7 @@
                     <div class="thumbnail">
                       <div class="row">
                         <div class="col-sm-5 col-md-5">
-                          <img class="item" onclick="createItem('{{ item.name }}', '{{ item.guid }}', {{ item.price }})" src="../../static/{{ item.image }}" alt="{{ item.name }}" height="150px" width="150px">
+                          <img class="item" onclick="createItem('{{ item.name }}', '{{ item.guid }}', {{ item.price }})" src="../../static/images/{{ item.image }}" alt="{{ item.name }}" height="150px" width="150px">
 
                         </div>
                         <div class="col-sm-7 col-md-7">
@@ -101,7 +101,7 @@
                       <div class="row">
 
                         <div class="col-md-5">
-                          <img class="item" onclick="createItem('{{ item.name }}', '{{ item.guid }}', {{ item.price }})" src="../../static/{{ item.image }}" alt="{{ item.name }}" height="150px" width="150px">
+                          <img class="item" onclick="createItem('{{ item.name }}', '{{ item.guid }}', {{ item.price }})" src="../../static/images/{{ item.image }}" alt="{{ item.name }}" height="150px" width="150px">
                         </div>
 
                         <div class="col-sm-7 col-md-7">
@@ -156,7 +156,9 @@
 
         <div class="row payment-element">
           <div class="col-md-6">
-            <button class="btn btn-danger" type="button"><h3>Cancel</h3></button>
+            <button type="button" class="btn btn-danger" onclick="clear()">
+              <h3>Cancel</h3>
+            </button>
           </div>
           <div class="col-md-6">
             <!-- Button trigger modal -->
@@ -219,6 +221,7 @@
                 </div>
               </div>
             </div>
+            
             <!-- Credit Modal -->
             <div class="modal fade" id="creditModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
               <div class="modal-dialog" role="document">
@@ -262,6 +265,7 @@
 
 <script>
   // Variables
+  var csrftoken = '{{ csrf_token }}';
   var totalItemCount = 0;
   var receipt = {
       "items": [],
@@ -339,7 +343,6 @@
       }
 
   }
-
   function getCustomerName() {
       if(document.getElementById('customerName').value === "") {
           throw {
@@ -357,6 +360,15 @@
       } catch(e) {
           alert(e.message);
       }
+  }
+  function clear() {
+      // This clears the receipt back into default state 
+      receipt = {
+          "items": [],
+          "totalPrice": 0
+      };
+      updateReceiptText();
+      document.getElementById('customerName').value = "";
   }
   function generatePOSTJson() {
       try {
@@ -423,7 +435,6 @@
               }
           }
       }
-      console.log(total);
       receipt["totalPrice"] = total;
       return total;
   }
@@ -496,21 +507,88 @@
   }
 
   // Render functions
-  function renderCashModal() {
-    var total = parseFloat(receipt["totalPrice"]);
-    total = total.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
-    $('#paymentModal').modal('toggle');
-    $('#cashModal').modal('toggle');
-    document.getElementById("totalPrice-CashCheckout").innerHTML = total;
-  }
+//  function renderCashModal() {
+//    var total = parseFloat(receipt["totalPrice"]);
+//    total = total.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+//    $('#paymentModal').modal('toggle');
+//    $('#cashModal').modal('toggle');
+//    document.getElementById("totalPrice-CashCheckout").innerHTML = total;
+//  }
+    function renderPaymentModal() {
+        $('#paymentModal').modal('toggle');
+    }
+    function renderCashModal() {
+        alert("Cash Order Submitted");
+        postReceipt();
+    }
+    function renderCreditModal() {
+        alert("Card Order Submitted");
+        postReceipt();
+    }
+    function postReceipt() {
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                    // Send the token to same-origin, relative URLs only.
+                    // Send the token only if the method warrants CSRF protection
+                    // Using the CSRFToken value acquired earlier
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        $.ajax({
+            url: '/cashier/submit_order',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            processData: false,
+            data: {data: JSON.stringify(receipt)},
+            traditional: true,
+            success: function(result) {
+                alert(result.Result);
+            }
+        });
 
-  function renderPaymentModal() {
-    $('#paymentModal').modal('toggle');
-  }
-
-  // On Document Ready
-  $( document ).ready(function() {
-  });
+        $('#paymentModal').modal('toggle');
+        clear();
+    }
+    // using jQuery
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    function sameOrigin(url) {
+            // test that a given url is a same-origin URL
+            // url could be relative or scheme relative or absolute
+            var host = document.location.host; // host + port
+            var protocol = document.location.protocol;
+            var sr_origin = '//' + host;
+            var origin = protocol + sr_origin;
+            // Allow absolute or scheme relative URLs to same origin
+            return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+                    (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+                    // or any other URL that isn't scheme relative or absolute i.e relative.
+                    !(/^(\/\/|http:|https:).*/.test(url));
+    }
+    // On Document Ready
+    $( document ).ready(function() {
+    });
 </script>
 
 </body>

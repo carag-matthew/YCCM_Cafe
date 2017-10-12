@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 from Cashier.models import Product, ProductMod
+import json
 
 
 def index(request):
@@ -14,3 +15,11 @@ def index(request):
     }
 
     return render(request, 'cashier/index.html', context)
+
+def create_order(request):
+    if request.method == "POST":
+        print('*'*50)
+        print(json.loads(request.body))
+        print('*'*50)
+    else:
+        return redirect('/')

@@ -20,19 +20,26 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
-with open('secret_stuff.json', 'r') as json_file:
-    data = json.load(json_file)
-    # SECURITY WARNING: keep the secret key used in production secret!
-    SECRET_KEY = data["SECRET_KEY"]
+# Database
+# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'faacpos',
+        'USER': 'faac',
+        'PASSWORD': 'password',
+        'HOST': '127.0.0.1',
+        'PORT': '5432'
+    }
+}
 
-    # Database
-    # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-    DATABASES = data["DATABASES"]
-
-    ALLOWED_HOSTS = data["ALLOWED_HOSTS"]
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'kl-(9kd6y_w$t$gr85d0lg!n5ewb532t40jvr24shws1ualn1_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+ALLOWED_HOSTS = []
 
 # Application definition
 
