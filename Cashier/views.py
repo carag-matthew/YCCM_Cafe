@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
-from Cashier.models import Product, ProductMod
+from Cashier.models import * 
 import json
 
 
@@ -19,10 +19,14 @@ def index(request):
 def create_order(request):
     if request.method == "POST" and request.is_ajax():
         json_data = json.loads(request.body) 
-        try: 
-            print(json_data)
-        except KeyError:
-            HttpResponseServerError("Malformed data!")
+        write_order_to_db(json_data)
         return HttpResponse("OK")
     else:
         return redirect('/')
+
+def write_order_to_db(json_data):
+    try:
+        items = json_data['items']
+    except KeyError:
+        return None 
+

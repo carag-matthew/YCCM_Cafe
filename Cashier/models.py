@@ -5,6 +5,9 @@ from django.db import models
 class Customer(models.Model):
     name = models.CharField(max_length=100)
 
+    def save(self, *args, **kwargs):
+        super(Blog, self).save(*args, **kwargs)
+
 
 class ProductMod(models.Model):
     name = models.CharField(max_length=100)
@@ -22,14 +25,14 @@ class Product(models.Model):
     guid = models.CharField(name='guid', max_length=50)
 
 
-class Order(models.Model):
+class OrderItem(models.Model):
     customer = models.ForeignKey(Customer)
     timestamp = models.DateTimeField(name='order_timestamp')
-
-
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order)
     product = models.ForeignKey(Product)
-    mods = models.ForeignKey(ProductMod)
     quantity = models.IntegerField()
 
+
+class OrderItem_Mods(models.Model):
+    orderItem = models.ForeignKey(OrderItem)
+    mod = models.ForeignKey(ProductMod)
+    quantity = models.IntegerField()
