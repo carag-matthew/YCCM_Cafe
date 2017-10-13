@@ -536,13 +536,15 @@
                 }
             }
         });
+        receipt_json = JSON.stringify(receipt);
+        console.log(receipt_json);
         $.ajax({
             url: '/cashier/submit_order',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             processData: false,
-            data: {data: JSON.stringify(receipt)},
+            data: receipt_json,
             traditional: true,
             success: function(result) {
                 alert(result.Result);

@@ -17,9 +17,12 @@ def index(request):
     return render(request, 'cashier/index.html', context)
 
 def create_order(request):
-    if request.method == "POST":
-        print('*'*50)
-        print(json.loads(request.body))
-        print('*'*50)
+    if request.method == "POST" and request.is_ajax():
+        json_data = json.loads(request.body) 
+        try: 
+            print(json_data)
+        except KeyError:
+            HttpResponseServerError("Malformed data!")
+        return HttpResponse("OK")
     else:
         return redirect('/')
