@@ -269,7 +269,8 @@
   var totalItemCount = 0;
   var receipt = {
       "items": [],
-      "totalPrice": 0
+      "totalPrice": 0,
+      "customerName": ""
   };
 
   // Receipt Functions
@@ -365,8 +366,10 @@
       // This clears the receipt back into default state 
       receipt = {
           "items": [],
-          "totalPrice": 0
+          "totalPrice": 0,
+          "customerName": ""
       };
+      totalItemCount = 0;
       updateReceiptText();
       document.getElementById('customerName').value = "";
   }
