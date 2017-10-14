@@ -156,7 +156,7 @@
 
         <div class="row payment-element">
           <div class="col-md-6">
-            <button type="button" class="btn btn-danger" onclick="clear()">
+            <button type="button" class="btn btn-danger" onclick="clearReceipt()">
               <h3>Cancel</h3>
             </button>
           </div>
@@ -371,7 +371,7 @@
           alert(e.message);
       }
   }
-  function clear() {
+  function clearReceipt() {
       // This clears the receipt back into default state 
       receipt = {
           "items": [],
@@ -546,7 +546,7 @@
         });
 
         $('#paymentModal').modal('toggle');
-        clear();
+        clearReceipt();
     }
     // using jQuery
     function getCookie(name) {
