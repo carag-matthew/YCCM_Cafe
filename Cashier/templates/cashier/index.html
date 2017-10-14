@@ -421,15 +421,6 @@
       var total = 0.0;
       for(var i = 0; i < items.length; i++) {
           total += (items[i]['price'] * items[i]['quantity']);
-//          for(var attribute in items[i]) {
-//              if(items[i].hasOwnProperty(attribute)) {
-//                  if(items[i][attribute].hasOwnProperty('price')) {
-//                      if(items[i][attribute] !== items[i]['name']) {
-//                          total += (items[i][attribute]['price'] * items[i][attribute]['quantity']);
-//                      }
-//                  }
-//              }
-//          }
           if(items[i]['mods'].length > 0) {
               for(var k = 0; k < items[i]['mods'].length; k++) {
                   total += items[i]['mods'][k]['price'] * items[i]['mods'][k]['quantity'];
