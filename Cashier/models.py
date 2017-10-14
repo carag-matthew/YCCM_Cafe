@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 # Create your models here.
@@ -25,14 +26,16 @@ class Product(models.Model):
     guid = models.CharField(name='guid', max_length=50)
 
 
-class OrderItem(models.Model):
-    customer = models.ForeignKey(Customer)
-    timestamp = models.DateTimeField(name='order_timestamp')
-    product = models.ForeignKey(Product)
-    quantity = models.IntegerField()
-
-
 class OrderItem_Mods(models.Model):
-    orderItem = models.ForeignKey(OrderItem)
     mod = models.ForeignKey(ProductMod)
     quantity = models.IntegerField()
+
+
+class OrderItem(models.Model):
+    customer = models.CharField(max_length=100)
+    timestamp = models.DateTimeField(name='order_timestamp', default=timezone.now())
+    product = models.ForeignKey(Product)
+    product_mods = models.ManyToManyField(OrderItem_Mods)
+    quantity = models.IntegerField()
+    paidByCard = models.BooleanField(default=False)
+    price = models.FloatField()
