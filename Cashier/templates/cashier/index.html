@@ -270,7 +270,8 @@
   var receipt = {
       "items": [],
       "totalPrice": 0,
-      "customerName": ""
+      "customerName": "",
+      "paidByCard": false
   };
 
   // Receipt Functions
@@ -297,21 +298,30 @@
       var item = {
           "name": name,
           "quantity": quantity,
-          "price": price
+          "price": price,
+          "mods": []
       };
+
+      var totalModCount = 0;
 
       {% for mod in mods_list %}
           if('{{ mod.guid }}' === 'IceOpt') { // TODO: Add isToggle field in db?
               var toggleToQuantityConversion = getToggle(itemGuid + '{{ mod.guid }}') === false ? 0 : 1;
-              item['{{ mod.name }}'] = {
-                  "quantity": toggleToQuantityConversion,
-                  "price": {{ mod.price }}
-              };
+              if (toggleToQuantityVersion > 0) {
+                  item['mods'][totalModCount++] = {
+                      "name": '{{ mod.name }}',
+                      "quantity": toggleToQuantityConversion,
+                      "price": {{ mod.price }}
+                  };
+              }
           } else {
-              item['{{ mod.name }}'] = {
-                  "quantity": getQuantity(itemGuid + '{{ mod.guid }}'),
-                  "price": {{ mod.price }}
-              };
+              if (getQuantity(itemGuid + '{{ mod.guid }}') > 0) {
+                  item['mods'][totalModCount++] = {
+                      "name": '{{ mod.name }}',
+                      "quantity": getQuantity(itemGuid + '{{ mod.guid }}'),
+                      "price": {{ mod.price }}
+                  };
+              }
           }
       {% endfor %}
 
@@ -356,7 +366,6 @@
   }
   function submit() {
       try {
-          generatePOSTJson();
           $('#paymentModal').modal('toggle');
       } catch(e) {
           alert(e.message);
@@ -367,22 +376,12 @@
       receipt = {
           "items": [],
           "totalPrice": 0,
-          "customerName": ""
+          "customerName": "",
+          "paidByCard": false
       };
       totalItemCount = 0;
       updateReceiptText();
       document.getElementById('customerName').value = "";
-  }
-  function generatePOSTJson() {
-      try {
-          return {
-              "customerName": getCustomerName(),
-              "receipt": getReceipt()
-          };
-      } catch(e) {
-          throw e;
-      }
-
   }
   function getReceipt() {
       if(receipt.items.length > 0) {
@@ -404,16 +403,10 @@
       // Iterate through the items array
       for(var i = 0; i < items.length; i++) {
           innerHTML += items[i].quantity + "x <b>" + items[i].name + "</b><br>";
-          for(var attribute in items[i]) {
-              if(items[i].hasOwnProperty(attribute)) {
-                  if(items[i][attribute].hasOwnProperty('price')) {
-                      if(items[i][attribute] !== items[i]['name']) {
-                          if(items[i][attribute]['quantity'] > 0) {
-                              innerHTML += "<span style=\"padding-left:5em\"><i>" + attribute + ": " +
-                                  items[i][attribute]['quantity'] + "</i></span><br>";
-                          }
-                      }
-                  }
+          if(items[i]['mods'].length > 0) {
+              for(var k = 0; k < items[i]['mods'].length; k++) {
+                  innerHTML += "<span style=\"padding-left:5em\"><i>" + items[i]['mods'][k]['name'] + ": " +
+                      items[i]['mods'][k]['quantity'] + "</i></span><br>";
               }
           }
       }
@@ -428,13 +421,18 @@
       var total = 0.0;
       for(var i = 0; i < items.length; i++) {
           total += (items[i]['price'] * items[i]['quantity']);
-          for(var attribute in items[i]) {
-              if(items[i].hasOwnProperty(attribute)) {
-                  if(items[i][attribute].hasOwnProperty('price')) {
-                      if(items[i][attribute] !== items[i]['name']) {
-                          total += (items[i][attribute]['price'] * items[i][attribute]['quantity']);
-                      }
-                  }
+//          for(var attribute in items[i]) {
+//              if(items[i].hasOwnProperty(attribute)) {
+//                  if(items[i][attribute].hasOwnProperty('price')) {
+//                      if(items[i][attribute] !== items[i]['name']) {
+//                          total += (items[i][attribute]['price'] * items[i][attribute]['quantity']);
+//                      }
+//                  }
+//              }
+//          }
+          if(items[i]['mods'].length > 0) {
+              for(var k = 0; k < items[i]['mods'].length; k++) {
+                  total += items[i]['mods'][k]['price'] * items[i]['mods'][k]['quantity'];
               }
           }
       }
@@ -526,6 +524,7 @@
     }
     function renderCreditModal() {
         alert("Card Order Submitted");
+        receipt["paidByCard"] = true;
         postReceipt();
     }
     function postReceipt() {
@@ -539,8 +538,9 @@
                 }
             }
         });
+        receipt['customerName'] = getCustomerName();
         receipt_json = JSON.stringify(receipt);
-        console.log(receipt_json);
+        console.log(receipt);
         $.ajax({
             url: '/cashier/submit_order',
             type: 'POST',
