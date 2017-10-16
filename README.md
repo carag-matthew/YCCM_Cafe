@@ -45,5 +45,4 @@ Tada! You should be good to go.
 
 ## Licensing
 
-This project is licensed under Unlicense license. This license does not require you to take the license with you to your project.
-
+This software is licensed under the [MIT License](https://github.com/carag-matthew/YCCM_Cafe_POS/blob/master/LICENSE).
