@@ -584,6 +584,9 @@
     }
     // On Document Ready
     $( document ).ready(function() {
+        $('.dropdown-menu').click(function(event){
+                 event.stopPropagation();
+             });
     });
 </script>
 
