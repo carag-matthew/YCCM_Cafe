@@ -366,13 +366,15 @@
   }
   function submit() {
       try {
+          getCustomerName();
+          getReceipt();
           $('#paymentModal').modal('toggle');
       } catch(e) {
           alert(e.message);
       }
   }
   function clearReceipt() {
-      // This clears the receipt back into default state 
+      // This clears the receipt back into default state
       receipt = {
           "items": [],
           "totalPrice": 0,
@@ -530,7 +532,7 @@
             }
         });
         receipt['customerName'] = getCustomerName();
-        receipt_json = JSON.stringify(receipt);
+        var receipt_json = JSON.stringify(receipt);
         console.log(receipt);
         $.ajax({
             url: '/cashier/submit_order',
@@ -545,6 +547,7 @@
             }
         });
 
+        // language=JQuery-CSS
         $('#paymentModal').modal('toggle');
         clearReceipt();
     }
@@ -556,7 +559,7 @@
             for (var i = 0; i < cookies.length; i++) {
                 var cookie = jQuery.trim(cookies[i]);
                 // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                     break;
                 }
