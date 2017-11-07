@@ -276,6 +276,7 @@
 
   // Receipt Functions
   function createItem(name, itemGuid, price) {
+      // TODO: Code Refactor This. This is fugly
       try {
           var quantity = getQuantity(itemGuid+"Qty");
           var espressoQuantity = getQuantity(itemGuid+"EspQty");
@@ -297,7 +298,7 @@
 
       var item = {
           "name": name,
-          "quantity": quantity,
+          "quantity": 1,
           "price": price,
           "mods": []
       };
@@ -325,9 +326,11 @@
           }
       {% endfor %}
 
-      insertItemToJSON(item);
-      updateReceiptText(receipt);
+      for (var i = 0; i < quantity; i++) {
+          insertItemToJSON(item);
+      }
 
+      updateReceiptText(receipt);
       resetFields(itemGuid);
   }
   function insertItemToJSON(item) {
@@ -461,8 +464,8 @@
   function getQuantity(itemGuid) {
       var element = document.getElementById(itemGuid);
       if(element !== null) {
-          if((new RegExp('[1234567890]*')).test(element.value)) {
-              return isNaN(parseInt(element.value)) ? 0 : parseInt(element.value);
+          if((new RegExp('[0123456789]+')).test(element.value)) {
+              return isNaN(parseFloat(element.value)) ? 0 : parseFloat(element.value);
           } else {
               throw {
                   error: "Invalid Integer Exception",
@@ -551,6 +554,8 @@
         $('#paymentModal').modal('toggle');
         clearReceipt();
     }
+
+
     // using jQuery
     function getCookie(name) {
         var cookieValue = null;
